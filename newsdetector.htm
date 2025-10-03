@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Fake News Detector</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      padding: 30px;
+      border-radius: 25px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+      color: #00ffe0;
+    }
+
+    p.subtitle {
+      font-size: 1rem;
+      color: #d0d0d0;
+      margin-bottom: 25px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      border-radius: 15px;
+      border: none;
+      outline: none;
+      padding: 15px;
+      font-size: 1rem;
+      resize: none;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    textarea::placeholder {
+      color: #ccc;
+    }
+
+    .btn {
+      background: linear-gradient(90deg, #00ffe0, #0077ff);
+      border: none;
+      padding: 15px 20px;
+      border-radius: 15px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #fff;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,255,224,0.5);
+    }
+
+    .result {
+      margin-top: 25px;
+      text-align: left;
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 15px;
+      border-left: 5px solid #00ffe0;
+    }
+
+    .result h2 {
+      color: #00ffe0;
+      margin-bottom: 10px;
+    }
+
+    .links a {
+      display: block;
+      padding: 8px 0;
+      color: #ffd700;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .links a:hover {
+      color: #00ffe0;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 0.85rem;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+    
+  <div class="container">
+    
+    <h1>AI Fake News Detector</h1>
+    <p class="subtitle">Paste any news article, tweet, or WhatsApp forward. Verify from trusted news sources.</p>
+
+    <textarea id="newsInput" placeholder="Paste the news text here..."></textarea>
+    <button class="btn" onclick="searchNews()">Check News</button>
+
+    <div id="result" class="result">
+      <h2>Result will appear here</h2>
+      <p>Links from popular news sources:</p>
+      <div class="links" id="newsLinks"></div>
+    </div>
+
+    <p class="footer">⚡ Powered by AI + Trusted News Sources</p>
+  </div>
+
+  <script>
+    function searchNews() {
+      const query = document.getElementById("newsInput").value.trim();
+      const resultBox = document.getElementById("result");
+      const linksBox = document.getElementById("newsLinks");
+
+      if(!query) {
+        resultBox.querySelector('h2').innerText = "⚠️ Please enter some text first.";
+        linksBox.innerHTML = "";
+        return;
+      }
+
+      resultBox.querySelector('h2').innerText = "🔎 Searching news sources...";
+      linksBox.innerHTML = "";
+
+      // List of trusted news sources
+      const sources = [
+        {name: "Times of India", url: `https://timesofindia.indiatimes.com/topic/${encodeURIComponent(query)}`},
+        {name: "Republic Bharat", url: `https://www.republicworld.com/topic/${encodeURIComponent(query)}`},
+        {name: "Hindustan Times", url: `https://www.hindustantimes.com/search/${encodeURIComponent(query)}`},
+        {name: "NDTV", url: `https://www.ndtv.com/topic/${encodeURIComponent(query)}`},
+        {name: "India Today", url: `https://www.indiatoday.in/topic/${encodeURIComponent(query)}`},
+        {name: "The Hindu", url: `https://www.thehindu.com/search/?q=${encodeURIComponent(query)}`},
+        {name: "Scroll.in", url: `https://scroll.in/search?q=${encodeURIComponent(query)}`},
+        {name: "The Quint", url: `https://www.thequint.com/search?q=${encodeURIComponent(query)}`},
+        {name: "News18", url: `https://www.news18.com/search/${encodeURIComponent(query)}`},
+        {name: "The Wire", url: `https://thewire.in/search?search=${encodeURIComponent(query)}`},
+        {name: "Factly", url: `https://factly.in/?s=${encodeURIComponent(query)}`},
+        {name: "Alt News", url: `https://www.altnews.in/?s=${encodeURIComponent(query)}`},
+        {name: "Boom Live", url: `https://www.boomlive.in/?s=${encodeURIComponent(query)}`},
+        {name: "Reuters", url: `https://www.reuters.com/site-search/?query=${encodeURIComponent(query)}`},
+        {name: "BBC News", url: `https://www.bbc.co.uk/search?q=${encodeURIComponent(query)}`},
+        {name: "CNN", url: `https://edition.cnn.com/search?q=${encodeURIComponent(query)}`},
+        {name: "Al Jazeera", url: `https://www.aljazeera.com/search/${encodeURIComponent(query)}`},
+        {name: "The Guardian", url: `https://www.theguardian.com/search?q=${encodeURIComponent(query)}`},
+        {name: "The New York Times", url: `https://www.nytimes.com/search?query=${encodeURIComponent(query)}`},
+        {name: "The Washington Post", url: `https://www.washingtonpost.com/newssearch/?query=${encodeURIComponent(query)}`},
+        {name: "FactCheck.org", url: `https://www.factcheck.org/?s=${encodeURIComponent(query)}`},
+        {name: "Snopes", url: `https://www.snopes.com/?s=${encodeURIComponent(query)}`},    
+        {name: "PolitiFact", url: `https://www.politifact.com/search/?q=${encodeURIComponent(query)}`},
+        {name: "Full Fact", url: `https://fullfact.org/search/?q=${encodeURIComponent(query)}`},
+      ];
+
+      // Display links dynamically
+      let htmlLinks = "";
+      sources.forEach(src => {
+        htmlLinks += `<a href="${src.url}" target="_blank">🔗 ${src.name}</a>`;
+      });
+
+      resultBox.querySelector('h2').innerText = "✅ Check below links to verify news:";
+      linksBox.innerHTML = htmlLinks;
+    }
+   
+  </script>
+</body>
+</html>

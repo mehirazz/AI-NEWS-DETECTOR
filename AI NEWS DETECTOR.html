@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEWS DETECTOR</title>
+    <link rel="icon" href="logo.jpg">
+    <style>
+        div1{
+            text-align: center;
+            margin-top: 20px;
+        }
+        div1 h1{
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        div1 input[type="submit"]{
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        div1 input[type="submit"]:hover{
+            background-color: #0056b3;
+        }
+        fieldset {
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #193d64;
+            border-radius: 10px;
+            background-color: aliceblue;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            
+        }
+        legend {
+            font-size: 20px;
+            font-weight: bold;
+            color: #130f01;
+            padding: 0 10px;
+        }
+        body {
+            background: linear-gradient(135deg, #c4c6ce 0%, #b6e1f1 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            
+        }
+
+        
+    </style>
+
+</head>
+<body>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detector</title>
+<link rel="stylesheet" href="newsdetector.css">
+</head>
+<body>
+    
+    <div class="container">
+        <header>
+            <h1>Fake News Detector</h1>
+            <p>Analyze news content to detect potential misinformation</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <label for="newsText">Paste news content or headline:</label>
+                <textarea id="newsText" placeholder="Enter the news text you want to analyze here..."></textarea>
+                <center><button id="analyzeBtn">Analyze for Fake News</button></center>
+            </div>
+            
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Analyzing content...</p>
+            </div>
+            
+            <div class="result-section">
+                <center><h2>Analysis Result</h2></center>
+                <div id="verdict" class="verdict">Submit content to get analysis</div>
+                <div class="explanation">
+                    <h3>How it works:</h3>
+                    <p>Our system analyzes news content based on several factors:</p>
+                    <ul>
+                        <li>Sensationalist language detection</li>
+                        <li>Credible source references</li>
+                        <li>Emotional manipulation indicators</li>
+                        <li>Factual consistency patterns</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <form action="/newsdetector.htm">
+        
+        <footer>
+            <p>Note: This is a demonstration tool. Always verify information through multiple reliable sources.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('analyzeBtn').addEventListener('click', function() {
+            const newsText = document.getElementById('newsText').value.trim();
+            const verdictElement = document.getElementById('verdict');
+            const loadingElement = document.querySelector('.loading');
+            
+            if (!newsText) {
+                verdictElement.textContent = 'Please enter some news content to analyze';
+                verdictElement.className = 'verdict suspicious';
+                return;
+            }
+            
+            // Show loading state
+            loadingElement.style.display = 'block';
+            verdictElement.textContent = 'Analyzing...';
+            verdictElement.className = 'verdict';
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                // Hide loading
+                loadingElement.style.display = 'none';
+                
+                // Simple fake news detection logic (would be replaced with real API call)
+                const fakeScore = analyzeText(newsText);
+                
+                // Display result
+                if (fakeScore >= 0.7) {
+                    verdictElement.textContent = '🚨 POTENTIALLY FAKE NEWS - Verify with trusted sources';
+                    verdictElement.className = 'verdict fake';
+                } else if (fakeScore >= 0.4) {
+                    verdictElement.textContent = '⚠ SUSPICIOUS CONTENT - Cross-check facts';
+                    verdictElement.className = 'verdict suspicious';
+                } else {
+                    verdictElement.textContent = '✅ LIKELY REAL NEWS - Still, verify with multiple sources';
+                    verdictElement.className = 'verdict real';
+                }
+            }, 1500);
+        });
+        
+        function analyzeText(text) {
+            // Convert text to lowercase for easier matching
+            const lowerText = text.toLowerCase();
+            
+            // Indicators of potentially fake news
+            const fakeIndicators = [
+                'shocking', 'unbelievable', 'secret', 'they don\'t want you to know',
+                'conspiracy', 'cover-up', 'mainstream media', 'breaking hoax',
+                'doctors hate', 'miracle cure', 'never before seen'
+            ];
+            
+            // Indicators of credible news
+            const realIndicators = [
+                'according to research', 'study shows', 'experts say', 'official sources',
+                'verified by', 'peer-reviewed', 'scientific evidence', 'data indicates'
+            ];
+            
+            // Count matches for each category
+            let fakeCount = 50;
+            let realCount = 80;
+            
+            fakeIndicators.forEach(indicator => {
+                if (lowerText.includes(indicator)) fakeCount++;
+            });
+            
+            realIndicators.forEach(indicator => {
+                if (lowerText.includes(indicator)) realCount++;
+            });
+            
+            // Calculate a simple score (0 = real, 1 = fake)
+            const totalIndicators = fakeIndicators.length + realIndicators.length;
+            const fakeScore = (fakeCount / (fakeCount + realCount + 1));
+            
+            // Additional factor: text length (very short texts are more suspicious)
+            const lengthFactor = text.length < 50 ? 0.3 : 0;
+            
+            return Math.min(1, fakeScore + lengthFactor);
+        }
+    </script>
+  
+    <div class="cross-check">
+         
+        <center><h1><b>If not sure about the news?<br> Cross-check it from here
+        </b></h1></center>
+         <center><span style="font-size: 90px;">👇</span></center>
+    </div>
+    <fieldset>
+        <legend><h1><b>Cross Check</b></h1></legend>
+        
+    <div1>
+    <h1>You can cross check from here</h1><br>
+    <form action="achaaa.html">
+   <center> <input type="submit" value="Check here"></center>
+    </div1>
+    </fieldset>
+</body>
+</html>
+</body>
+</html>
